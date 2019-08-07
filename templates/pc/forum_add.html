@@ -1,0 +1,106 @@
+{% extends 'pc/base.html' %}
+{% load static %}
+{% block title %}
+    发布帖子
+{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/article_add.css' %}">
+    <link rel="stylesheet" href="{% static 'markdown/css/editormd.css' %}" />
+{% endblock %}
+{% block link_js %}
+ <script src="{% static 'markdown/editormd.js' %}"></script>
+{% endblock %}
+{% block content %}
+    <section class="main">
+        <h4>发布帖子</h4>
+        <form>
+          <div class="form-group">
+            <label >标题</label>
+            <input type="text" class="form-control validate" name="title"  placeholder="请输入帖子标题">
+          </div>
+          <div class="form-group">
+            <label >关键字(Keywords)</label>
+            <input type="text" class="form-control" name="keywords"  placeholder="请输入关键字，以英文逗号分割，利于搜索引擎收录">
+          </div>
+
+            <div class="form-group">
+            <label >帖子内容</label>
+            <div id="test-editormd">
+                <textarea name="" class="form-control" ></textarea></div>
+            </div>
+          <div class="form-group">
+            <label >选择帖子分类</label>
+              <select name="category" class="form-control">
+                  <option value="">--请选择--</option>
+                 {% for foo in category %}
+                     <option value="{{ foo.id }}">{{ foo.name }}</option>
+                 {% endfor %}
+
+              </select>
+          </div>
+          <button type="button" class="btn btn-default" id="btn">文章发布</button>
+        </form>
+    </section>
+{% endblock %}
+{% block js %}
+
+      <script>
+    	var testEditor;
+            $(function() {
+                testEditor = editormd("test-editormd", {
+                    width   : "100%",
+                    height  : 800,
+                    syncScrolling : "single",
+                    path    : "/static/markdown/lib/",
+
+                    saveHTMLToTextarea : true,//注意3：这个配置，textarea可以提交
+                     emoji: true,//emoji表情，默认关闭
+                    /**上传图片相关配置如下*/
+                    imageUpload : true,
+                    imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+                    imageUploadURL : "/article/blog_img_upload/",
+                });
+
+            });
+        function validate(obj,el){
+             if(!obj||obj.trim() == ""){
+                el.css('border-color','red');
+                 return false;
+            }else {
+                 return true
+             }
+        }
+        $("#btn").on('click',function () {
+    if(validate($('.validate').val(),$('.validate')) && validate($('select').val(),$('select')) && validate(testEditor.getMarkdown(),$('#test-editormd'))){
+        var title = $("input[name='title']").val();
+        var keywords =$("input[name='keywords']").val();
+        var category =$("select[name='category']").val();
+        var form = new FormData()
+        form.append('authors','{{ request.user.id }}')
+        form.append('title',title)
+        form.append('keywords',keywords)
+        form.append('content',testEditor.getMarkdown())
+        form.append('csrfmiddlewaretoken','{{ csrf_token }}')
+        form.append('category',category)
+        $.ajax({
+            url:'{% url 'forum:add' %}',
+            type:'post',
+            contentType : false,
+            data:form,
+            processData:false,
+            success:function (data) {
+                if(data.code==200){
+                    window.location.href='{% url 'forum:forum' %}'
+                }
+            },
+        error:function (xhr) {
+            console.log(xhr)
+        }
+        })
+    }
+
+
+})
+    </script>
+{% endblock %}
