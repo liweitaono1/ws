@@ -13,12 +13,27 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from rest_framework import routers
+
 from article import views
-from user.views import test, captcha_refresh, login_view, logout_view, to_login, Register, yan, getClbackQQ
+from course.views import CoursesList, MeCoursesList, CourseCreatedList, CourseListCreated
+from support.views import BannerList, EmailsList, LinkList
+from user.views import test, captcha_refresh, login_view, logout_view, to_login, Register, yan, getClbackQQ, \
+    get_message, PersonApi, UserMessages
 from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path, include
 
+router = routers.DefaultRouter()
+router.register('UserMessages', UserMessages, base_name='UserMessages')
+router.register('courseList', CoursesList)
+router.register('mecourseList', MeCoursesList)
+router.register('course', CourseCreatedList)
+router.register('Addtutorial', CourseListCreated)
+router.register('BannerList', BannerList)
+router.register('EmailsList', EmailsList)
+router.register('LinkList', LinkList)
+router.register('PersonApi', PersonApi)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', test),  # 这是生成验证码的图片
@@ -37,5 +52,7 @@ urlpatterns = [
     path('support/', include('apps.support.urls', namespace='support')),
     url(r'^search/', include('haystack.urls'), name='haystack_search'),
     url('getClbackQQ', getClbackQQ, name='getClbackQQ'),
+    path('info/', get_message, name='info'),
+    url(r'api/', include(router.urls)),
 
 ]
