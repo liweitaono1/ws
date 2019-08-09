@@ -20,8 +20,8 @@
                      <div class="follow_main">
                          <div class="info_item clearfix"style="position: relative">
                              <label for="name">头像</label>
-{#                             <img class="info_img" src="{{ MEDIA_URL }}{{ request.user.user_imag }}" alt="">#}
-{#                             <input type="file" id="file">#}
+                             <img class="info_img" src="{{ MEDIA_URL }}{{ request.user.user_imag }}" alt="">
+                             <input type="file" id="file">
                               <!--规定上传的文件只能是图片-->
                              <a class="imgbox">
                                  <span id="img3" class="info_img" style="background-image:url({% if request.user.user_imag  %}
@@ -37,10 +37,10 @@
                              <label for="name">用户名</label>
                              <input type="text" name="username"class="val origin" value="{{ user.username }}" disabled>
                          </div>
-{#                         <div class="info_item clearfix">#}
-{#                             <label for="name">手机号</label>#}
-{#                             <input type="text" name="mobile"class="val origin" value="{{ user.mobile }}" disabled>#}
-{#                         </div>#}
+                         <div class="info_item clearfix">
+                             <label for="name">手机号</label>
+                             <input type="text" name="mobile"class="val origin" value="{{ user.mobile }}" disabled>
+                         </div>
                       <div class="info_item clearfix">
                              <label for="name">QQ</label>
                                 {% if user.get_qq %}
@@ -61,7 +61,7 @@
                              </div>
                          <div class="info_item clearfix">
                              <label for="name" style="left:-7px;position: relative;">个人介绍 </label>
-{#                                 <input type="text" name="info" class="val" value="{{ user.info }}"disabled>100字#}
+                                 <input type="text" name="info" class="val" value="{{ user.info }}"disabled>100字
                              <textarea name="info" id="me" class="val origin"  disabled>{{ user.info }}</textarea>
                              </div>
                          <a class="editshow btn btn-primary" id="btn">提交</a>

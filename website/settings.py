@@ -193,17 +193,17 @@ MEDIA_ROOT = (
     os.path.join(BASE_DIR, 'upload')
 )
 
-# DOMAIN = ''  # 用户验证邮箱访问地址
-# EMAIL_HOST = "smtp.exmail.qq.com"
-# EMAIL_PORT = 465
-# EMAIL_HOST_USER = ''
-# EMAIL_WEBITE_NAME = ''
+DOMAIN = '127.0.0.1:8000/fan'  # 用户验证邮箱访问地址
+EMAIL_HOST = "smtp.exmail.qq.com"
+EMAIL_PORT = 465
+EMAIL_HOST_USER = ''
+EMAIL_WEBITE_NAME = ''
 # EMAIL_HOST_PASSWORD = conf.get('email', 'password')
-# EMAIL_USE_SSL = True  # 是否使用SSL加密，qq企业邮箱要求使用
-#
-# EMAIL_USE_TLS = False  # 是否使用TLS安全传输协议
-#
-# ERROR_FROM = ''
+EMAIL_USE_SSL = True  # 是否使用SSL加密，qq企业邮箱要求使用
+
+EMAIL_USE_TLS = False  # 是否使用TLS安全传输协议
+
+ERROR_FROM = ''
 
 # 搜索
 HAYSTACK_CONNECTIONS = {

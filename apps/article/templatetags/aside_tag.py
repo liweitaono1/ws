@@ -1,5 +1,6 @@
 from django import template
 
+from article.models import Article
 
 register = template.Library()
 @register.inclusion_tag('pc/base_aside.html')
