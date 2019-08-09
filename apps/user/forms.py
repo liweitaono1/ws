@@ -76,6 +76,7 @@ class InfoForm(forms.Form):
     file = forms.ImageField(required=False)
     info = forms.CharField(required=False)
     position = forms.CharField(required=False)
+    mobile = forms.CharField(required=False)
 
 
 class Follow_Forms(forms.ModelForm):

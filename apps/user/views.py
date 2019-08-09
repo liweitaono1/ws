@@ -491,11 +491,13 @@ def Info(request):
         forms = InfoForm(request.POST)
         if forms.is_valid():
             username = forms.cleaned_data.get('username')
+            mobile = forms.cleaned_data.get('mobile')
             info = request.POST.get('info')
             position = request.POST.get('position')
             file = request.FILES.get('file')
             user = request.user
             user.username = username
+            user.mobile = mobile
             user.info = info
             user.position = position
             if file:
