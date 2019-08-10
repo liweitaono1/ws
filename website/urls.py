@@ -14,15 +14,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from rest_framework import routers
+from rest_framework_jwt.views import obtain_jwt_token
 
 from article import views
 from course.views import CoursesList, MeCoursesList, CourseCreatedList, CourseListCreated
 from support.views import BannerList, EmailsList, LinkList
 from user.views import test, captcha_refresh, login_view, logout_view, to_login, Register, yan, getClbackQQ, \
-    get_message, PersonApi, UserMessages
+    get_message, PersonApi, UserMessages, UserGetInfo
 from django.conf.urls import url
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 
 router = routers.DefaultRouter()
 router.register('UserMessages', UserMessages, base_name='UserMessages')
@@ -34,6 +35,7 @@ router.register('BannerList', BannerList)
 router.register('EmailsList', EmailsList)
 router.register('LinkList', LinkList)
 router.register('PersonApi', PersonApi)
+router.register('info', UserGetInfo)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', test),  # 这是生成验证码的图片
@@ -54,5 +56,6 @@ urlpatterns = [
     url('getClbackQQ', getClbackQQ, name='getClbackQQ'),
     path('info/', get_message, name='info'),
     url(r'api/', include(router.urls)),
+    re_path(r'api/login/$', obtain_jwt_token),  # jwt认证
 
 ]

@@ -1,8 +1,9 @@
 import uuid
 from datetime import datetime
 
+from django.contrib.auth import get_user_model
 from django.db import models
-from user.models import User
+User = get_user_model()
 
 # Create your models here.
 

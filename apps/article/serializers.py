@@ -30,7 +30,7 @@ class Article_CommentSerializerAdd(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class ArticleCommentReplaySerializer(serializers.ModelSerializer):
+class ArticleCommentReplySerializer(serializers.ModelSerializer):
     '''回复'''
 
     # user = UserSerializer()
