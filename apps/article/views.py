@@ -26,12 +26,17 @@ from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 from utils.jsonserializable import DateEncoder
 
 User = get_user_model()
+
+
 def test(request):
     WorkList = []
-    for i in range(1,100):
-        WorkList.append(Forum(title='```cpp\n下例 中的某些语句读不太明白：\n 1.   DataTable dt=ds.Tables[\"cs\"] 这句最难理解，意思是读取cs表赋给新建的内存表dt（复制表）?还是dt表指向（引用）cs表，修改dt其实就是修改cs?\n 2.   sda.FillSchema(dt,SchemaType.Mapped); 这句应该是将数据库表中的元数据填入到dt中，为何要填入?cs表中没有元数据吗?\n 3.   此例中修改了dt表，执行Update为何更新了数据库?dt、cs与数据库是个怎么个联系?\n\n\n例：\nSqlConnection ds;\nDataSet ds;\nSqlDataAdapter sda;\n...........        \nDataTable dt=ds.Tables[\"cs\"];\nsda.FillSchema(dt,SchemaType.Mapped);\nDataRow dr=dt.Rows.Find(txtNo.text);\ndr[\"姓名\"]=txtName.Text.Trim();\ndr[\"性别\"]=txtSex.Text.Trim();\nSqlCommandBuilder cmdbuilder=new SqlCommandBuilder(sda);\nsda.Update(dt);\n```%s'%(i),category_id=4,authors_id='7d4d01419d1d491ab7c399b3c965b'))
+    for i in range(1, 100):
+        WorkList.append(Forum(
+            title='```cpp\n下例 中的某些语句读不太明白：\n 1.   DataTable dt=ds.Tables[\"cs\"] 这句最难理解，意思是读取cs表赋给新建的内存表dt（复制表）?还是dt表指向（引用）cs表，修改dt其实就是修改cs?\n 2.   sda.FillSchema(dt,SchemaType.Mapped); 这句应该是将数据库表中的元数据填入到dt中，为何要填入?cs表中没有元数据吗?\n 3.   此例中修改了dt表，执行Update为何更新了数据库?dt、cs与数据库是个怎么个联系?\n\n\n例：\nSqlConnection ds;\nDataSet ds;\nSqlDataAdapter sda;\n...........        \nDataTable dt=ds.Tables[\"cs\"];\nsda.FillSchema(dt,SchemaType.Mapped);\nDataRow dr=dt.Rows.Find(txtNo.text);\ndr[\"姓名\"]=txtName.Text.Trim();\ndr[\"性别\"]=txtSex.Text.Trim();\nSqlCommandBuilder cmdbuilder=new SqlCommandBuilder(sda);\nsda.Update(dt);\n```%s' % (
+                i), category_id=4, authors_id='7d4d01419d1d491ab7c399b3c965b'))
     Forum.objects.bulk_create(WorkList)
     return HttpResponse('ok')
+
 
 def Article_list(request):
     '''
@@ -54,13 +59,13 @@ def Article_list(request):
         item.append(data)
 
     try:
-        page = request.GET.get('page',1)
+        page = request.GET.get('page', 1)
         if page == '':
-            page =1
+            page = 1
 
     except PageNotAnInteger:
         page = request.GET.get('page')
-    p = Paginator(article,10,request=request)
+    p = Paginator(article, 10, request=request)
     people = p.page(page)
     if request.is_ajax():
         json_dict = {}
@@ -91,8 +96,9 @@ def Article_list(request):
             json_dict['data'].append(list_dict)
         return JsonResponse(json_dict, safe=False, encoder=DateEncoder)
     banners = Banners.objects.first()
-    return render(request,'pc/index.html', {'article':people,'qq':qq,'popular':popular,'count':item,'recommend':recommend,'links':links,'banners':banners})
-
+    return render(request, 'pc/index.html',
+                  {'article': people, 'qq': qq, 'popular': popular, 'count': item, 'recommend': recommend,
+                   'links': links, 'banners': banners})
 
 
 def ArticleList(request):
@@ -103,31 +109,33 @@ def ArticleList(request):
     '''
     article = Article.objects.filter(is_show=True)
     category = Category_Article.objects.all()
-    type = request.GET.get('type','')
+    type = request.GET.get('type', '')
     try:
         page = request.GET.get('page', 1)
         if type:
             article = article.filter(category_id=type)
             if page == '':
-                page =1
+                page = 1
     except PageNotAnInteger:
         page = 1
 
-    p = Paginator(article,10,request=request)
+    p = Paginator(article, 10, request=request)
     people = p.page(page)
     headlines = Headlines.objects.all()[:30]
     banners = Banners.objects.first()
 
-    return render(request,'pc/article.html',{'article': people,'category':category,'Headlines':headlines,'banners':banners})
+    return render(request, 'pc/article.html',
+                  {'article': people, 'category': category, 'Headlines': headlines, 'banners': banners})
+
 
 def api(request):
     # TODO: 修改
-    url = 'http://v.juhe.cn/toutiao/index?type=keji&key={0}'.format(conf.get('AppKey','key'))
+    url = 'http://v.juhe.cn/toutiao/index?type=keji&key={0}'.format(conf.get('AppKey', 'key'))
     headers = {
         "Accept-Encoding": "gzip",
         "Connection": "close"
     }
-    r = requests.get(url,headers=headers)
+    r = requests.get(url, headers=headers)
     print(r.json())
     if r.status_code == requests.codes.ok:
         dict_json = r.json()
@@ -136,11 +144,11 @@ def api(request):
         list_dict = []
         for item in dict_json['result']['data']:
             obj = Headlines(
-                url = item['url'],
-                title = item['title'],
-                category = item['category'],
-                conent = item['content'],
-                author_name = item['author_name']
+                url=item['url'],
+                title=item['title'],
+                category=item['category'],
+                conent=item['content'],
+                author_name=item['author_name']
             )
             list_dict.append(obj)
         Headlines.objects.bulk_create(list_dict)
@@ -149,13 +157,18 @@ def api(request):
     day = cur_date - datetime.timedelta(days=7)
     # 查询前一周数据，也可以用range
     Headlines.objects.filter(add_time__lte=day).delete()
-    return HttpResponse({'ee':'43'})
+    return HttpResponse({'ee': '43'})
+
 
 from apps.article.tasks import add, error_email, conf
+
+
 def addModel(request):
     add.delay()
     print('定时任务')
     return HttpResponse('ok')
+
+
 @login_required(login_url='/login')
 def ArticleMe(request):
     '''
@@ -163,7 +176,7 @@ def ArticleMe(request):
     :param request:
     :return:
     '''
-    article=Article.objects.filter(authors__follow__fan_id = request.user.id,is_show=True)
+    article = Article.objects.filter(authors__follow__fan_id=request.user.id, is_show=True)
     category = Category_Article.objects.all()
     type = request.GET.get('type', '')
     try:
@@ -178,7 +191,10 @@ def ArticleMe(request):
     people = p.page(page)
     headlines = Headlines.objects.all()[:20]
     banners = Banners.objects.first()
-    return render(request, 'pc/article_me.html', {'article': people,'category':category,'Headlines':headlines,'banners':banners})
+    return render(request, 'pc/article_me.html',
+                  {'article': people, 'category': category, 'Headlines': headlines, 'banners': banners})
+
+
 @login_required(login_url='/login')
 def Article_Add(request):
     '''
@@ -188,7 +204,7 @@ def Article_Add(request):
     '''
     if request.method == 'GET':
         category = Category_Article.objects.all()
-        return render(request,'pc/articlesadd.html',{"category":category})
+        return render(request, 'pc/articlesadd.html', {"category": category})
 
     if request.method == 'POST':
         forms = Article_form(request.POST)
@@ -217,7 +233,7 @@ def Article_Add(request):
 
 
 @login_required(login_url='/login')
-def ArticleUpdate(request,article_id):
+def ArticleUpdate(request, article_id):
     """
     文章修改
     :param request:
@@ -239,7 +255,7 @@ def ArticleUpdate(request,article_id):
             category = request.POST.get('category', '')
             desc = request.POST.get('desc', '')
             keywords = request.POST.get('keywords', '')
-            type = request.POST.get('type','')
+            type = request.POST.get('type', '')
             if type:
                 list_pic = request.FILES.get('list_pic', '')
             else:
@@ -259,6 +275,8 @@ def ArticleUpdate(request,article_id):
             except Exception:
                 return JsonResponse({"code": 400, "data": "发布失败"})
         return JsonResponse({"code": 400, "data": "验证失败"})
+
+
 @require_POST
 @csrf_exempt
 def ArticleDelete(request):
@@ -272,11 +290,13 @@ def ArticleDelete(request):
         user = json.loads(request.body)['username']
         if id and user:
             Article.objects.filter(id=id, authors_id=user).update(is_show=False)
-            return JsonResponse({'status':200,'message':'删除成功'})
-        return JsonResponse({'status':400,'message':'删除失败'})
+            return JsonResponse({'status': 200, 'message': '删除成功'})
+        return JsonResponse({'status': 400, 'message': '删除失败'})
+
+
 @login_required(login_url='/login')
 @require_POST
-def RemoveImage(request,article_id):
+def RemoveImage(request, article_id):
     '''
     删除图片
     :param request:
@@ -287,9 +307,10 @@ def RemoveImage(request,article_id):
         article = Article.objects.get(id=article_id)
         article.list_pic = ''
         article.save()
-        return JsonResponse({'data':200})
+        return JsonResponse({'data': 200})
 
-def Article_detail(request,article_id):
+
+def Article_detail(request, article_id):
     '''
     文章详情页
     :param request:
@@ -306,7 +327,8 @@ def Article_detail(request,article_id):
 
     content = Article.objects.filter(category_id=id).exclude(id=article_id).order_by('-click_nums')[:10]
     print(content.annotate())
-    return render(request,'pc/article_detail.html',{'article':article,'id':article_id,'content':content})
+    return render(request, 'pc/article_detail.html', {'article': article, 'id': article_id, 'content': content})
+
 
 @csrf_exempt
 @login_required(login_url='/login')
@@ -317,7 +339,7 @@ def blog_img_upload(request):
     :return:
     '''
     if request.method == 'POST':
-        data= request.FILES['editormd-image-file']
+        data = request.FILES['editormd-image-file']
         img = Image.open(data)
         width = img.width
         height = img.height
@@ -334,7 +356,7 @@ def blog_img_upload(request):
         img.thumbnail((width, height), Image.ANTIALIAS)  # 生成缩略图
         url = 'blogimg/' + data.name
         print(request.build_absolute_uri(settings.MEDIA_URL + data.name))
-        name = settings.MEDIA_ROOT +'/' +url
+        name = settings.MEDIA_ROOT + '/' + url
         while os.path.exists(name):
             file, ext = os.path.splitext(data.name)
             file = file + str(random.randint(1, 1000))
@@ -345,15 +367,9 @@ def blog_img_upload(request):
             img.save(name)
             print(name)
             url = request.build_absolute_uri(settings.MEDIA_URL + 'blogimg/' + data.name)
-            return JsonResponse({'success':1,'message':'成功','url':url})
+            return JsonResponse({'success': 1, 'message': '成功', 'url': url})
         except Exception as e:
             return JsonResponse({'success': 0, 'message': '上传失败'})
-
-
-
-
-
-
 
 
 class StandardResultsSetPagination(PageNumberPagination):
@@ -361,4 +377,3 @@ class StandardResultsSetPagination(PageNumberPagination):
     # page_size_query_param = 'page_size'  # 每页设置展示多少条
     page_query_param = 'page'
     max_page_size = 100
-

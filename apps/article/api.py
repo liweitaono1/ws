@@ -9,10 +9,10 @@ from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from article.filter import ArticleFilter
 from article.models import Recommend, Category_Article, ArticleCommentReply, Article_Comment, Article
 from article.serializers import ArticleCommitSerializer, Category_ArticleSerializer, Article_CommentSerializerAdd, \
-    ArticleCreatedSerializer, ArticleSerializer,ArticleCommentReplySerializer
+    ArticleCreatedSerializer, ArticleSerializer, ArticleCommentReplySerializer
 from article.views import StandardResultsSetPagination
 from user.models import UserMessage
-from utils.permissions import IsOwnerOrReadOnly, IsOwnerOr, CsrfExemptSessionAuthentication
+from utils.permissions import IsOwnerOrReadOnly, IsOwnerOr
 
 
 class ArticleListView(viewsets.ReadOnlyModelViewSet):
@@ -26,6 +26,7 @@ class ArticleListView(viewsets.ReadOnlyModelViewSet):
     filter_class = ArticleFilter
     permission_classes = (IsAuthenticated, IsOwnerOr)  # 未登录禁止访问
     authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication]
+
 
 class MeArticleListView(viewsets.ReadOnlyModelViewSet):
     """
@@ -44,7 +45,6 @@ class MeArticleListView(viewsets.ReadOnlyModelViewSet):
             '-add_time')
 
 
-
 class FollowListView(viewsets.ReadOnlyModelViewSet):
     """
     TODO 我关注的文章
@@ -54,9 +54,10 @@ class FollowListView(viewsets.ReadOnlyModelViewSet):
     pagination_class = StandardResultsSetPagination
     permission_classes = (IsAuthenticated, IsOwnerOr)  # 未登录禁止访问
     authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication]
-    def list(self, request, *args, **kwargs):
 
-        queryset = Article.objects.filter(authors__follow__fan_id=self.request.user.id).filter(is_show=True).order_by('-add_time')
+    def list(self, request, *args, **kwargs):
+        queryset = Article.objects.filter(authors__follow__fan_id=self.request.user.id).filter(is_show=True).order_by(
+            '-add_time')
         serializer = ArticleSerializer(queryset, many=True)
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -65,18 +66,17 @@ class FollowListView(viewsets.ReadOnlyModelViewSet):
         return Response(serializer.data)
 
 
-class ArticleCreated(mixins.CreateModelMixin,mixins.UpdateModelMixin,viewsets.GenericViewSet):
+class ArticleCreated(mixins.CreateModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):
     """
     创建文章
     """
     queryset = Article.objects.filter(is_show=True)
     serializer_class = ArticleCreatedSerializer
-    permission_classes = (IsAuthenticated,IsOwnerOr)  # 未登录禁止访问
-    authentication_classes = [CsrfExemptSessionAuthentication, JSONWebTokenAuthentication]
+    permission_classes = (IsAuthenticated, IsOwnerOr)  # 未登录禁止访问
+    authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication]
 
 
-
-class ArticleCommintView(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
+class ArticleCommintView(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
     """TODO 評論"""
     serializer_class = Article_CommentSerializerAdd
     queryset = Article_Comment.objects.all()
@@ -94,23 +94,25 @@ def my_callback(sender, **kwargs):
     """
 
     message = UserMessage()
-    message.user=kwargs['instance'].article.authors
+    message.user = kwargs['instance'].article.authors
     message.ids = kwargs['instance'].article.id
     message.to_user_id = kwargs['instance'].user_id
     message.has_read = False
-    message.url =kwargs['instance'].url
-    message.message="你的%s文章被人评论了,快去看看吧!"%kwargs['instance'].article.title
+    message.url = kwargs['instance'].url
+    message.message = "你的%s文章被人评论了,快去看看吧!" % kwargs['instance'].article.title
     message.save()
 
 
-class ArticleCommentReplyView(mixins.CreateModelMixin,viewsets.GenericViewSet):
+class ArticleCommentReplyView(mixins.CreateModelMixin, viewsets.GenericViewSet):
     """TODO 回復評論"""
     serializer_class = ArticleCommentReplySerializer
     queryset = ArticleCommentReply.objects.all()
     permission_classes = (IsAuthenticated, IsOwnerOrReadOnly)  # 未登录禁止访问
     authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication]
+
+
 @receiver(post_save, sender=ArticleCommentReply)
-def my_callback_reply(sender,**kwargs):
+def my_callback_reply(sender, **kwargs):
     '''
     评论通知
     :param sender:
@@ -126,12 +128,14 @@ def my_callback_reply(sender,**kwargs):
     message.message = "你参与的 %s 文章评论有人回复了,快去看看吧!" % kwargs['instance'].aomments_id.article.title
     message.save()
 
-class CategoryView(mixins.UpdateModelMixin,mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
+
+class CategoryView(mixins.UpdateModelMixin, mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
     """TODO 分類"""
     queryset = Category_Article.objects.all()
     serializer_class = Category_ArticleSerializer
     permission_classes = (IsAuthenticated, IsOwnerOrReadOnly)  # 未登录禁止访问
-    authentication_classes = [CsrfExemptSessionAuthentication, JSONWebTokenAuthentication]
+    authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication]
+
 
 class ArticleCommit(viewsets.ModelViewSet):
     """文章推荐"""

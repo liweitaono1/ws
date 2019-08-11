@@ -3,8 +3,8 @@ from haystack import indexes
 from article.models import Article
 
 
-class ArticleIndex(indexes.SearchIndex,indexes.Indexable):
-    text = indexes.CharField(document=True,use_template=True)
+class ArticleIndex(indexes.SearchIndex, indexes.Indexable):
+    text = indexes.CharField(document=True, use_template=True)
     categorys = indexes.CharField(model_attr='category')
 
     def get_model(self):
