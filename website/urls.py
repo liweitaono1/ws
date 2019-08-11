@@ -17,16 +17,32 @@ from rest_framework import routers
 from rest_framework_jwt.views import obtain_jwt_token
 
 from article import views
+from article.api import FollowListView, ArticleCommit, MeArticleListView, ArticleListView, CategoryView, \
+    ArticleCommintView, ArticleCommentReplyView, ArticleCreated
 from course.views import CoursesList, MeCoursesList, CourseCreatedList, CourseListCreated
-from support.views import BannerList, EmailsList, LinkList
+from forum.api import Forum_plateView, ForumView, CommentView, Parent_CommentView
+from support.views import BannerList, EmailsList, LinkList, QQList, SeoList
 from user.views import test, captcha_refresh, login_view, logout_view, to_login, Register, yan, getClbackQQ, \
-    get_message, PersonApi, UserMessages, UserGetInfo
+    get_message, PersonApi, UserMessages, UserGetInfo, UserGetAllInfo, PersonOthers
 from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path, include, re_path
 
 router = routers.DefaultRouter()
+router.register('article_list', ArticleListView)
+router.register('me_article_list', MeArticleListView)
+router.register('ArticleCommit', ArticleCommit)
+router.register('follow_list', FollowListView)
+router.register('category', CategoryView)
+router.register('article_Comment', ArticleCommintView)
+router.register('comment_reply', ArticleCommentReplyView)
+router.register('PersonApi', PersonApi)
+router.register('info', UserGetInfo)
+router.register('all_info', UserGetAllInfo)
+# router.register('user_disbale', UserDisbale)
+router.register('PersonOthers', PersonOthers)
 router.register('UserMessages', UserMessages, base_name='UserMessages')
+router.register('article', ArticleCreated)
 router.register('courseList', CoursesList)
 router.register('mecourseList', MeCoursesList)
 router.register('course', CourseCreatedList)
@@ -34,8 +50,12 @@ router.register('Addtutorial', CourseListCreated)
 router.register('BannerList', BannerList)
 router.register('EmailsList', EmailsList)
 router.register('LinkList', LinkList)
-router.register('PersonApi', PersonApi)
-router.register('info', UserGetInfo)
+router.register('forum/category', Forum_plateView)
+router.register('forum', ForumView)
+router.register('CommentView', CommentView)
+router.register('Parent_CommentView', Parent_CommentView)
+router.register('get-list',QQList)
+router.register('seo-list',SeoList,basename='seo-list')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', test),  # 这是生成验证码的图片

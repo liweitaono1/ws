@@ -186,8 +186,8 @@
             data.comments = $(obj).prev().val()
             data.user = '{{ request.user.id }}'
             data.url = '{{ request.path }}'
-            data.cip = returnCitySN['cip']
-            data.address = returnCitySN['cname']
+<!--            data.cip = returnCitySN['cip']-->
+<!--            data.address = returnCitySN['cname']-->
             $.ajax({
                 url:'/api/article_Comment/',
                 type:'post',
@@ -214,9 +214,9 @@
             var data = new Object()
             data.comments = $(obj).prev().val()
             data.user = '{{ request.user.id }}'
-            data.cip = returnCitySN['cip']
+//            data.cip = returnCitySN['cip']
             data.url = '{{ request.path }}'
-            data.address = returnCitySN['cname']
+//            data.address = returnCitySN['cname']
             data.to_uids =$(obj).parent().parent().find('div.fl').attr('data-id')
             data.aomments_id =$(obj).parent().parent().find('.to').attr('data-id')
              $.ajax({

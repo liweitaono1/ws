@@ -12,7 +12,7 @@ from article.serializers import ArticleCommitSerializer, Category_ArticleSeriali
     ArticleCreatedSerializer, ArticleSerializer,ArticleCommentReplySerializer
 from article.views import StandardResultsSetPagination
 from user.models import UserMessage
-from utils.permissions import IsOwnerOrReadOnly, IsOwnerOr
+from utils.permissions import IsOwnerOrReadOnly, IsOwnerOr, CsrfExemptSessionAuthentication
 
 
 class ArticleListView(viewsets.ReadOnlyModelViewSet):
@@ -72,7 +72,7 @@ class ArticleCreated(mixins.CreateModelMixin,mixins.UpdateModelMixin,viewsets.Ge
     queryset = Article.objects.filter(is_show=True)
     serializer_class = ArticleCreatedSerializer
     permission_classes = (IsAuthenticated,IsOwnerOr)  # 未登录禁止访问
-    authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication]
+    authentication_classes = [CsrfExemptSessionAuthentication, JSONWebTokenAuthentication]
 
 
 
@@ -131,7 +131,7 @@ class CategoryView(mixins.UpdateModelMixin,mixins.CreateModelMixin,viewsets.Read
     queryset = Category_Article.objects.all()
     serializer_class = Category_ArticleSerializer
     permission_classes = (IsAuthenticated, IsOwnerOrReadOnly)  # 未登录禁止访问
-    authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication]
+    authentication_classes = [CsrfExemptSessionAuthentication, JSONWebTokenAuthentication]
 
 class ArticleCommit(viewsets.ModelViewSet):
     """文章推荐"""

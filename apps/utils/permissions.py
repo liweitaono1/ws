@@ -1,4 +1,5 @@
 from rest_framework import permissions
+from rest_framework.authentication import SessionAuthentication
 
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
@@ -49,3 +50,12 @@ class IsOwnerOrRead(permissions.BasePermission):
             return
         # Write permissions are only allowed to the owner of the snippet.
         return obj.course.user == request.user
+
+
+class CsrfExemptSessionAuthentication(SessionAuthentication):
+    """
+    关闭csrf验证
+    """
+
+    def enforce_csrf(self, request):
+        return  # To not perform the csrf check previously happening

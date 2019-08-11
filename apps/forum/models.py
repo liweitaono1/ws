@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime
 
 from django.contrib.auth import get_user_model
 from django.db import models
@@ -12,6 +13,31 @@ class Forum_plate(models.Model):
     '''
     论坛版块表
     '''
+    name = models.CharField(max_length=64,unique=True,verbose_name='板块名称',default='')
+    image = models.ImageField(upload_to='forum/%Y%m%d',verbose_name='图标',blank=True)
+    # CATEGORY_CHOICES = (
+    #     (1, '一级类目'),
+    #     (2, '二级类目'),
+    #     (3, '三级类目')
+    # )
+    # code = models.CharField(default='',max_length=30,verbose_name='类别code',help_text='类别code')
+    # category_type = models.IntegerField(choices=CATEGORY_CHOICES,default=1,verbose_name='类目级别',help_text='类目级别')
+    # parent_category  = models.ForeignKey('self',null=True,blank=True,verbose_name='父类目级',help_text='父类目级',on_delete=models.CASCADE,related_name='sub_cat')
+    author = models.ForeignKey(User,verbose_name='作者',on_delete=models.CASCADE,default=uuid.uuid4)
+    add_time = models.DateTimeField(default=datetime.now)
+
+    def __str__(self):
+        return self.name
+
+    def get_count(self):
+        return self.forum_set.filter(hidden=False).count()
+
+    class Meta:
+        verbose_name = '论坛板块'
+        verbose_name_plural = verbose_name
+        ordering = ('-add_time',)
+
+
 
 
 class Forum(models.Model):
@@ -42,3 +68,75 @@ class Forum(models.Model):
         verbose_name = '帖子表'
         verbose_name_plural = verbose_name
         ordering = ('-add_time',)
+
+class Forum_click(models.Model):
+    '''
+    评论
+    '''
+    user = models.ForeignKey(User,on_delete=models.CASCADE,verbose_name='评论人')
+    forums = models.ForeignKey(Forum,verbose_name='帖子',on_delete=models.CASCADE)
+    comments = models.TextField(verbose_name='评论')
+    address = models.CharField(max_length=50,verbose_name='地址',blank=True,null=True)
+    url = models.CharField(max_length=60,blank=True,null=True,default='')
+    add_time = models.DateTimeField(default=datetime.now,verbose_name='添加时间')
+    def __str__(self):
+        return self.comments
+
+    class Meta:
+        verbose_name = '帖子评论表'
+        verbose_name_plural = verbose_name
+        ordering = ('-add_time',)
+
+
+class Comment(models.Model):
+    '''
+    评论
+    '''
+    user = models.ForeignKey(User,on_delete=models.CASCADE,verbose_name='评论人')
+    forums = models.ForeignKey(Forum,verbose_name='帖子',on_delete=models.CASCADE)
+    comments = models.TextField(verbose_name='评论')
+    address = models.CharField(max_length=50,verbose_name='地址',blank=True,null=True)
+    url = models.CharField(max_length=60,blank=True,null=True,default='')
+    add_time = models.DateTimeField(default=datetime.now,verbose_name='添加时间')
+    def __str__(self):
+        return self.comments
+
+    class Meta:
+        verbose_name = '帖子评论表'
+        verbose_name_plural = verbose_name
+        ordering = ('-add_time',)
+
+
+class Parent_Comment(models.Model):
+    '''
+    评论回复
+    '''
+    user = models.ForeignKey(User,on_delete=models.CASCADE,verbose_name='当前用户',related_name='form_Parent_Comment')
+    to_Parent_Comments = models.ForeignKey(User,on_delete=models.CASCADE,verbose_name='目标用户',related_name='to_Parent_Commenty',default='')
+    forums = models.ForeignKey(Forum,verbose_name='帖子',on_delete=models.CASCADE)
+    comments = models.TextField(verbose_name='评论')
+    parent_comments = models.ForeignKey(Comment,blank=True,null=True,on_delete=models.CASCADE)
+    address = models.CharField(max_length=50,verbose_name='地址',blank=True,null=True)
+    url = models.CharField(max_length=60, blank=True, null=True, default='')
+    add_time = models.DateTimeField(default=datetime.now, verbose_name='添加时间')
+
+    def __str__(self):
+        return self.comments
+
+    class Meta:
+        verbose_name = '帖子回复表'
+        verbose_name_plural = verbose_name
+
+class Priority(models.Model):
+    '''
+    置顶
+    '''
+    stick = models.ForeignKey(Forum,on_delete=models.CASCADE)
+    add_time = models.DateTimeField(auto_now_add=True,verbose_name='发布时间')
+
+    def __str__(self):
+        return self.stick
+
+    class Meta:
+        verbose_name = '置顶'
+        verbose_name_plural = verbose_name
