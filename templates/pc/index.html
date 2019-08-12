@@ -5,7 +5,7 @@
 首页
 {% endblock %}
 {% block authors %}
-冯金琪
+liweitao
 {% endblock %}
 {% block css %}
 {#    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">#}
@@ -15,7 +15,7 @@
 {% block content %}
     <section class="main clearfix">
     <article class="fl">
-     {% comment %}   <div class="blogs">
+    <div class="blogs">
             <div class="blogs_head" style="background: url({% static 'img/recommend.png' %})no-repeat 0 50%;">今日推荐</div>
             <div class="blogs_cont">
 <h3><span class="blogs_type">{{ recommend.first.recommends.category.name }}</span><a  href="{% url 'article:detail' recommend.first.recommends.id %}">{{ recommend.first.recommends.title }}</a></h3>
@@ -35,7 +35,7 @@
 
 
             </div>
-        </div>{% endcomment %}
+        </div>
         <div class="banner" style="background: url({% if banners.image %}
             {{ MEDIA_URL }}{{ banners.image }}
             {% else %}
@@ -172,9 +172,9 @@
       <div class="tuijian">
         <h2 class="hometitle">商务合作</h2>
         <ul class="sidenews zhan">
-            <p>邮箱:<a target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=iuzv5O3g4_T748rs7_Tt4OPk__Ok6eXn" style="text-decoration:none;">fengjinqi@fengjinqi.com</a></p>
+            <p>邮箱:<a target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=iuzv5O3g4_T748rs7_Tt4OPk__Ok6eXn" style="text-decoration:none;">1135577502@qq.com</a></p>
             <br>
-            <p>QQ:1218525402</p>
+            <p>QQ:1135577502</p>
         </ul>
     </div>
 

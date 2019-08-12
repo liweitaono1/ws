@@ -159,7 +159,8 @@ class Register(View):
                     'activate',
                     token])])
             # send_mail(u'注册用户验证信息', message, settings.EMAIL_HOST_USER, [email], fail_silently=False)
-            # send_register_email.delay(email=email, username=username, token=token, send_type='register')
+            send_register_email
+            send_register_email(email=email, username=username, token=token, send_type='register')
             return JsonResponse({'valid': True, 'status': 200, 'message': u"请登录到注册邮箱中验证用户，有效期为1个小时"})
         return JsonResponse({'status': 400, 'data': form.errors, 'valid': False})
 
@@ -970,3 +971,5 @@ def bindingQQ(request):
                 user = authenticate(request, username=email, password=password)
                 login(request, user)
                 return HttpResponseRedirect(reverse('home'))
+
+

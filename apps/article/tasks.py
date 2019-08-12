@@ -1,5 +1,7 @@
 import datetime
 import random
+
+
 from configparser import ConfigParser
 from time import sleep
 
@@ -21,7 +23,7 @@ def random_str(randomlength=8):
     return str
 
 
-@app.task()
+# @app.task()
 def send_register_email(email, username=None, token=None, send_type='register'):
     '''
     登录注册等邮件发送
@@ -134,3 +136,6 @@ def removeApi():
     # 查询前一周数据,也可以用range,我用的是glt,lte大于等于
     Headlines.objects.filter(add_time__lte=day).delete()
     print('======已删除=========')
+
+if __name__ == '__main__':
+    send_register_email('1135577502@qq.com','12341234','123412342134')
